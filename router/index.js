@@ -9,6 +9,10 @@ const apiRoute = require("./api")
 
   router.use("/api/v1" , apiRoute)
 
+  router.use((req,res)=>{
+    res.status(404).json({success:false , message:"page not found"})
+  })
+
 
 
 
