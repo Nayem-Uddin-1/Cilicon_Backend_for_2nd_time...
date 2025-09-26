@@ -13,12 +13,12 @@ const userSchema = new mongoose.Schema({
     required: [true, "Email is required"],
     unique: true,
     trim: true,
-    match: [/\S+@\S+\.\S+/, "Email format is invalid"],
+    // match: [/\S+@\S+\.\S+/, "Email format is invalid"],
   },
   password: {
     type: String,
     required: [true, "Password is required"],
-    maxlength: [20, "Password must be less than 20 characters"],
+    // maxlength: [20, "Password must be less than 20 characters"],
     minlength: [4, "Password must be more than 4 characters"],
   },
   profilePic: {
@@ -44,6 +44,10 @@ const userSchema = new mongoose.Schema({
     enum: ["user", "admin"],
     default: "user",
   },
+  isVerify:{
+    type:Boolean,
+    default:false
+  }
 }, {
   timestamps: true
 });
