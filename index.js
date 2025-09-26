@@ -9,6 +9,7 @@ const router = require("./router");
 const conectedDb = require("./config/db");
 app.use(express.json())
 
+
 app.use(router)
 
 // Database Connection
@@ -21,3 +22,6 @@ app.listen(PORT, () => {
   console.log("server is ready on Port no  " + PORT);
 
 }) 
+
+ 
+ 

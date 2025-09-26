@@ -1,5 +1,5 @@
 const express = require("express");
-const { SignInController, LoginController } = require("../../controllers/authColtrollers");
+const { SignInController, LoginController, otpController } = require("../../controllers/authColtrollers");
 
 const router = express.Router();
 
@@ -7,6 +7,15 @@ const router = express.Router();
 
 // user signup authentication
 router.post("/signup", SignInController )
+
+// check otp
+router.post("/checkotp",otpController)
+
+// 
+
+
+
+
 router.post("/login", LoginController )
 
 
