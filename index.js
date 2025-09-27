@@ -2,6 +2,8 @@
 const express = require("express");
 const app = express();
 require('dotenv').config()
+const session = require('express-session')
+
 const PORT = process.env.PORT || 3000
 
 //   router setup
@@ -10,11 +12,21 @@ const conectedDb = require("./config/db");
 app.use(express.json())
 
 
-app.use(router)
 
 // Database Connection
 conectedDb()
 
+// express session
+app.use(session({
+  secret: process.env.secreetsession,
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false }
+}))
+
+
+
+app.use(router)
 
 
 // localhost/4000

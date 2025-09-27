@@ -143,10 +143,12 @@ async function LoginController(req, res) {
                    role:existingUser.role,
                  }
 
-                 const token = jwt.sign({ userData }, process.env.jwtsecret ,{ expiresIn: '1m' });
-                  res.cookie("token",token)
+                //  const token = jwt.sign({ userData }, process.env.jwtsecret ,{ expiresIn: '1m' });
+                //   res.cookie("token",token)
 
-            res.status(200).json({ message: "Login Successfull", data: userData ,token:token})
+               req.session.user=userData
+
+            res.status(200).json({ message: "Login Successfull" })
           } else {
             res.status(400).json({ success: false, message: "Password Invalid" })
 

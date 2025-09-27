@@ -1,5 +1,6 @@
 const express = require("express");
 const { SignInController, LoginController, otpController } = require("../../controllers/authColtrollers");
+const session = require("express-session");
 
 const router = express.Router();
 
@@ -15,7 +16,11 @@ router.post("/checkotp",otpController)
 router.post("/login", LoginController )
 
 
-
-
+router.get("/authuser",(req,res)=>{
+   res.send(req.session.user)
+   console.log(req.session.user);
+   
+   
+})
 
 module.exports = router
