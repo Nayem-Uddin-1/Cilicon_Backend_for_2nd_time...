@@ -6,6 +6,9 @@ const bcrypt = require('bcrypt');
 const emailValidation = require("../helpers/emailValidation");
 const sendMail = require('../helpers/sendMail');
 const randomOTP = require("../helpers/random-otp");
+const jwt = require('jsonwebtoken');
+
+
 
 // Signin Controller
 function SignInController(req, res) {
@@ -84,7 +87,6 @@ function SignInController(req, res) {
 }
 
 // Check Otp Controller
-
 const otpController = async (req, res) => {
   const { email, otp } = req.body
 
@@ -92,7 +94,7 @@ const otpController = async (req, res) => {
 
     const otpVerify = await userModel.findOne({ email })
 
- if (otpVerify.otp === otp) {
+    if (otpVerify.otp === otp) {
       otpVerify.isVerify = true
       otpVerify.otp = null
       await otpVerify.save()
@@ -116,8 +118,60 @@ const otpController = async (req, res) => {
   }
 }
 
-function LoginController(req, res) {
-  randomOTP()
+async function LoginController(req, res) {
+
+  const { email, password } = req.body
+
+  try {
+
+    const existingUser = await userModel.findOne({ email })
+
+    if (!existingUser) {
+      res.status(400).json({ success: false, message: "Email Invalid" })
+    }
+    else {
+
+      bcrypt.compare(password, existingUser.password, function (err, result) {
+
+
+        if (!err) {
+          if (result) {
+
+                 const userData= {
+                   id:existingUser._id,
+                   email:existingUser.email,
+                   role:existingUser.role,
+                 }
+
+                 const token = jwt.sign({ userData }, process.env.jwtsecret ,{ expiresIn: '1m' });
+                  res.cookie("token",token)
+
+            res.status(200).json({ message: "Login Successfull", data: userData ,token:token})
+          } else {
+            res.status(400).json({ success: false, message: "Password Invalid" })
+
+          }
+        } else {
+          res.status(501).json({ success: false, message: message.err })
+
+        }
+
+      });
+
+
+
+
+
+    }
+
+
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: error.email || "something went wrong"
+    })
+  }
+
 }
 
 
