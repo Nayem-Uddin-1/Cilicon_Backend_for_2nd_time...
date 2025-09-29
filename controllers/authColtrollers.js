@@ -85,7 +85,6 @@ function SignInController(req, res) {
 
 
 }
-
 // Check Otp Controller
 const otpController = async (req, res) => {
   const { email, otp } = req.body
@@ -117,7 +116,7 @@ const otpController = async (req, res) => {
     })
   }
 }
-
+// Log-In Controller
 async function LoginController(req, res) {
 
   const { email, password } = req.body
@@ -133,20 +132,27 @@ async function LoginController(req, res) {
 
       bcrypt.compare(password, existingUser.password, function (err, result) {
 
-
         if (!err) {
           if (result) {
 
-                 const userData= {
-                   id:existingUser._id,
-                   email:existingUser.email,
-                   role:existingUser.role,
-                 }
+            const userData = {
+              id: existingUser._id,
+              email: existingUser.email,
+              role: existingUser.role,
+            }
 
-                //  const token = jwt.sign({ userData }, process.env.jwtsecret ,{ expiresIn: '1m' });
-                //   res.cookie("token",token)
+            if (existingUser.role === "admin") {
+              req.session.cookie.maxAge = 5* 60 * 1000
 
-               req.session.user=userData
+            } else {
+              req.session.cookie.maxAge = 24*60* 60 * 1000
+
+            }
+
+            //  const token = jwt.sign({ userData }, process.env.jwtsecret ,{ expiresIn: '1m' });
+            //   res.cookie("token",token)
+
+            req.session.user = userData
 
             res.status(200).json({ message: "Login Successfull" })
           } else {
@@ -155,15 +161,9 @@ async function LoginController(req, res) {
           }
         } else {
           res.status(501).json({ success: false, message: message.err })
-
         }
 
       });
-
-
-
-
-
     }
 
 
@@ -175,7 +175,101 @@ async function LoginController(req, res) {
   }
 
 }
+// Log Out Contorller
+async function LogOutController(req, res) {
+
+
+  req.session.destroy(function (err) {
+
+    res.clearCookie("ecom_02")
+    if (err) {
+      res.status(500).json({
+        success: false,
+        message: err
+      })
+
+    } else {
+      res.status(200).json({
+        success: false,
+        message: "logout succesfully"
+      })
+
+    }
+
+
+  })
+
+
+}
+
+// Reset Password Controller 
+async function ResetPasswordController(req, res) {
+  const { email, oldpassword, newpassword } = req.body
+
+  try {
+
+    const existingUser = await userModel.findOne({ email })
+
+    bcrypt.compare(oldpassword, existingUser.password, function (err, result) {
+
+      if (err) {
+        res.status(500).json({
+          success: false,
+          message: err,
+        })
+      }
+      else {
+        if (result) {
+
+          bcrypt.hash(newpassword, 10, async function (err, hashpassword) {
+
+            if (err) {
+              return res.status(500).json({
+                success: false,
+                message: err
+              })
+
+            } else {
+              let updatepassword = await userModel.findOneAndUpdate({ email }, { password: hashpassword }, { new: true })
+
+              res.status(200).json({
+                success: true,
+                message: "password change successfully"
+              })
+            }
+          });
+        } else {
+          res.status(400).json({
+            success: false,
+            message: "password not match"
+          })
+        }
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error || "user not find"
+    })
+  }
 
 
 
-module.exports = { SignInController, LoginController, otpController }
+
+}
+// Make Forget Password
+
+async function ForgetPassword(req, res) {
+  res.send("forget password")
+
+}
+
+
+module.exports = {
+  SignInController,
+  LoginController,
+  otpController,
+  LogOutController,
+  ResetPasswordController,
+  ForgetPassword
+}
