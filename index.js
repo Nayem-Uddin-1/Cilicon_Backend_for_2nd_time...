@@ -35,7 +35,9 @@ app.get("/test",adminMiddelware,(req,res)=>{
 
 })
 
+app.use(express.static("uploads"))
 app.use(router)
+
 
 
 // localhost/4000

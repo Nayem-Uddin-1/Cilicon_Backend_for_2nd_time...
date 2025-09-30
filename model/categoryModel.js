@@ -19,19 +19,7 @@ const categorySchema = new mongoose.Schema(
       default: "",
       trim: true,
     },
-    slug: {
-      type: String,
-      required: true,
-      unique: true,
-      lowercase: true,
-    },
-    createdBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",  
-    },
-
-
-
+   
   },
   { timestamps: true }
 );
