@@ -93,6 +93,7 @@ async function getSingleCategory(req, res) {
    }
 }
 
+// =====delet-category======= 
 async function deleteCategoryController(req, res) {
    const { id } = req.params
    try {
@@ -105,9 +106,6 @@ async function deleteCategoryController(req, res) {
             message: "category not found"
          })
       }
-
-       
-
       //  ========made a proper path to delete image=========
       const oldPath = path.join(__dirname, "../uploads")
       const fullImagePath = deleteCategory.image.split("/")
@@ -138,9 +136,77 @@ async function deleteCategoryController(req, res) {
    }
 }
 
+// =====update-categories======= 
+
+async function updateCategoryController(req, res) {
+
+   try {
+
+      const { id } = req.params
+      const { name, description } = req.body
+      const { filename } = req.file
+      const { image } = req.file
+
+
+      if (filename) {
+         //find existance category
+         const oldCategory = await categoryModel.findById({ _id: id })
+         // error message
+         if (!oldCategory) {
+            res.status(404).json({
+               success: false,
+               message: "category not found"
+            })
+         } else {
+
+            const oldPath = path.join(__dirname, "../uploads")
+            const fullImagePath = oldCategory.image.split("/")
+            const imagePath = fullImagePath[fullImagePath.length - 1]
+
+            fs.unlink(`${oldPath}/${imagePath}`, async (err) => {
+               if (err) {
+                  res.status(500).json({
+                     success: false,
+                     message: "category not found"
+                  })
+               } else {
+
+                  const updatecategory = await categoryModel.findOneAndUpdate(
+                     { _id: id },
+                     { image: `${process.env.SERVER_URL}/${filename}` },
+                     { new: true }
+                  );
+
+                  res.status(200).json({
+                     success: true,
+                     message: "category updated succefully",
+                  })
+               }
+            })
+
+
+
+         }
+
+      }
+
+   } catch (error) {
+      res.status(500).json({
+         error,
+         success: false,
+         message: error.message || "category not found"
+      })
+
+   }
+
+
+}
+
+
 module.exports = {
    addcategoryController,
    getAllCategories,
    getSingleCategory,
-   deleteCategoryController
+   deleteCategoryController,
+   updateCategoryController
 }
