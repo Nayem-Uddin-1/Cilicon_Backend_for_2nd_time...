@@ -10,19 +10,23 @@ const categorySchema = new mongoose.Schema(
       trim: true,
       unique: true,
     },
-    image:{
-       type:String,
-       required:true
+    slug: {
+      type: String,
+      unique: true,
+    },
+    image: {
+      type: String,
+      required: true
     },
     description: {
       type: String,
       default: "",
       trim: true,
     },
-   
+
   },
   { timestamps: true }
 );
 
- 
-module.exports = mongoose.model("Category",categorySchema)
+
+module.exports = mongoose.model("Category", categorySchema)

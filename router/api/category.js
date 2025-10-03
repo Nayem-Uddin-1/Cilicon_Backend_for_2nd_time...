@@ -1,9 +1,10 @@
 const express = require("express");
-const { addcategoryController } = require("../../controllers/categoryControllers");
+const { addcategoryController, getAllCategories, getSingleCategory, deleteCategoryController } = require("../../controllers/categoryControllers");
 const router = express.Router();
 const multer = require('multer')
 const path =require("path")
 
+    //========store-images=========
 const storage = multer.diskStorage({
 
 
@@ -22,7 +23,6 @@ const storage = multer.diskStorage({
 
     }
 })
-
 function checkFileType(file, cb) {
     const filetypes = /jpeg|jpg|png|gif/;
     const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
@@ -34,14 +34,24 @@ function checkFileType(file, cb) {
         cb('Error: Images only! (jpeg, jpg, png, gif)');
     }
 }
-
 const upload = multer({ storage: storage , fileFilter: function(req, file, cb) {
     checkFileType(file, cb);
   } })
+   //========store-images=========
 
 
 
+       // ======add-Categories========
 router.post('/addcategory', upload.single("image"), addcategoryController)
+
+      // ======get-Categories========
+router.get('/get-allcategory', getAllCategories)
+
+      // ======get-single-Categories========
+router.get('/get-single-category/:slug', getSingleCategory )
+
+
+router.get('/delete-category/:id', deleteCategoryController )
 
 
 
