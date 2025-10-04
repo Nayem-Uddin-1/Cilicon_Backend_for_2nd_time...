@@ -45,18 +45,28 @@ async function getAllCategories(req, res) {
 
    try {
 
-      const allCategories = await categoryModel.find({})
+      const allCategories = await categoryModel.find({}).sort({ createdAt: -1 })
 
-      if (allCategories.length = 0) {
-         res.status(404).json({
+      console.log(allCategories);
+
+
+      if (allCategories.length === 0) {
+         return res.status(404).json({
             success: false,
-            message: "all category not found"
-         })
+            message: "category not found"
+         });
       }
 
-      res.status(200).json({ success: true, message: "Fetched All Category", data: allCategories })
+      res.status(200).json({
+         success: true,
+         message: "Fetched All Category",
+         data: allCategories
+      })
    } catch (error) {
-      res.status(500).json({ success: false, message: "categories not found" })
+      res.status(500).json({
+         success: false,
+         message: "categories not found"
+      })
 
    }
 
@@ -147,6 +157,11 @@ async function updateCategoryController(req, res) {
       const { filename } = req.file
       const { image } = req.file
 
+      const slug = slugify(name, {
+         replacement: '-',
+         lower: true,
+      })
+
 
       if (filename) {
          //find existance category
@@ -173,9 +188,11 @@ async function updateCategoryController(req, res) {
 
                   const updatecategory = await categoryModel.findOneAndUpdate(
                      { _id: id },
-                     { image: `${process.env.SERVER_URL}/${filename}` },
+                     { image: `${process.env.SERVER_URL}/${filename}`, name, description, slug },
                      { new: true }
+
                   );
+
 
                   res.status(200).json({
                      success: true,
