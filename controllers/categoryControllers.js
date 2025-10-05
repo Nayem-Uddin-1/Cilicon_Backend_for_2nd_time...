@@ -45,7 +45,7 @@ async function getAllCategories(req, res) {
 
    try {
 
-      const allCategories = await categoryModel.find({}).sort({ createdAt: -1 })
+      const allCategories = await categoryModel.find({}).sort({ createdAt: -1 }).populate("subcategory")
 
       console.log(allCategories);
 
