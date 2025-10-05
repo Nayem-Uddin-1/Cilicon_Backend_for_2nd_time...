@@ -1,8 +1,9 @@
 const { default: slugify } = require("slugify")
 const subCategoryModel = require("../model/subCategoryModel")
 const categoryModel = require("../model/categoryModel")
+const { errorMonitor } = require("connect-mongo")
 
-async function addSubCategory(req, res) {
+async function addSubCategoryController(req, res) {
 
 
     try {
@@ -24,7 +25,7 @@ async function addSubCategory(req, res) {
         subcategory.save()
 
         //=======Update category Model======
-        const updateCategory = await categoryModel.findOneAndUpdate({_id:category},{$push:{subcategory:subcategory.id}})
+        const updateCategory = await categoryModel.findOneAndUpdate({ _id: category }, { $push: { subcategory: subcategory.id } })
 
         updateCategory.save();
 
@@ -47,10 +48,88 @@ async function addSubCategory(req, res) {
 
 }
 
+async function deleteSubcategoryController(req, res) {
+
+    try {
+        const { id } = req.params
+
+
+        await subCategoryModel.findOneAndDelete({ _id: id })
+
+        await categoryModel.findOneAndUpdate({ subcategory: id }, { $pull: { subcategory: id } }, { new: true })
+
+        return res.status(200).json({
+            success: true,
+            message: "delete successfully"
+
+        })
+
+
+    } catch (error) {
+        return res.status(500).json({
+            error,
+            success: false,
+            message: error.message || "subcategory not found"
+        })
+    }
+
+}
+
+
+async function updateSubcategoryController(req, res) {
+
+    try {
+
+        const { name, description } = req.body
+        const { id } = req.params
+
+        const slug = slugify(name, {
+            replacement: '-',
+            lower: true,
+        })
+
+        const oldSubcategory = await subCategoryModel.findById({ _id: id })
+
+
+        if (!oldSubcategory) {
+            console.log("error log");
+
+        } else {
+
+            const updateSubcategory = await subCategoryModel.findOneAndUpdate(
+                { _id: id },
+                {
+                    name,
+                    description,
+                    slug,
+                },
+                { new: true }
+            )
+
+
+            return res.status(200).json({
+                success: true,
+                message: "subcategoryUpdate successfully",
+                data: updateSubcategory
+            })
+        }
 
 
 
+    } catch (error) {
+        return res.status(500).json({
+            error,
+            success: false,
+            message: error.message || "subcategory not found"
+        })
+    }
+
+}
 
 
 
-module.exports = { addSubCategory }
+module.exports = {
+    addSubCategoryController,
+    deleteSubcategoryController,
+    updateSubcategoryController
+}
