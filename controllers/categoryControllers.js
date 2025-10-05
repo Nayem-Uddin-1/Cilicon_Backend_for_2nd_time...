@@ -47,9 +47,6 @@ async function getAllCategories(req, res) {
 
       const allCategories = await categoryModel.find({}).sort({ createdAt: -1 }).populate("subcategory")
 
-      console.log(allCategories);
-
-
       if (allCategories.length === 0) {
          return res.status(404).json({
             success: false,

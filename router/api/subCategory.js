@@ -1,7 +1,8 @@
 const express = require("express");
 const { addSubCategoryController,
     deleteSubcategoryController,
-    updateSubcategoryController } = require("../../controllers/subCategoryController");
+    updateSubcategoryController, 
+    getSubcategoryByCategoryController} = require("../../controllers/subCategoryController");
 
 
 const router = express.Router();
@@ -14,6 +15,9 @@ router.delete("/delete-subcategory/:id", deleteSubcategoryController)
 
 
 router.patch("/update-subcategory/:id", updateSubcategoryController)
+
+
+router.get("/get-subcategory/:id", getSubcategoryByCategoryController)
 
 
 

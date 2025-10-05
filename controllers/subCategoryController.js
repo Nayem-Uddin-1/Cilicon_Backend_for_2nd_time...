@@ -127,9 +127,36 @@ async function updateSubcategoryController(req, res) {
 }
 
 
+async function getSubcategoryByCategoryController(req, res) {
+
+    try {
+
+        const { id } = req.params
+
+        const getSubcategory = await subCategoryModel.find({ category: id })
+
+        return res.status(200).json({
+            success: true,
+            message: "fetch subcategory by category successfull",
+            data: getSubcategory
+
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            error,
+            success: false,
+            message: error.message
+        })
+    }
+
+
+}
+
 
 module.exports = {
     addSubCategoryController,
     deleteSubcategoryController,
-    updateSubcategoryController
+    updateSubcategoryController,
+    getSubcategoryByCategoryController
 }
