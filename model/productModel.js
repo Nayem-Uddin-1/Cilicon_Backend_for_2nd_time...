@@ -13,8 +13,8 @@ const productSchema = new mongoose.Schema(
         },
         description: {
             type: String,
-         },
-  
+        },
+
         category: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Category"
@@ -24,15 +24,18 @@ const productSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "Subcategory"
         },
-              price: {
+        price: {
             type: Number,
-             min: [0, "Price cannot be negative"],
+            min: [0, "Price cannot be negative"],
         },
 
         thumbnail: {
-            type: String, // Store file path or URL
-       
-        }, 
+            type: String, 
+        },
+        variant: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Variant"
+        }
 
     },
     { timestamps: true }
