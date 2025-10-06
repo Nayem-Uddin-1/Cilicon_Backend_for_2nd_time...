@@ -1,5 +1,5 @@
 const express = require("express");
-const { addProductController } = require("../../controllers/productControllers");
+const { addProductController, getAllProductController } = require("../../controllers/productControllers");
 const upload = require("../../controllers/imageUploadsController");
 const { addVariantController } = require("../../controllers/variantController");
 const router = express.Router();
@@ -7,6 +7,7 @@ const router = express.Router();
 
 
 router.post("/add-product", upload.single('thumbnail'), addProductController)
+router.get("/get-product", getAllProductController)
 
 //==============================
     //=VARIANT_ROUTER=====

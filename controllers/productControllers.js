@@ -31,14 +31,15 @@ async function addProductController(req, res) {
             { new: true }
         );
 
+
         const updatesubcategory = await subCategoryModel.findOneAndUpdate(
             { _id: subcategory },
             { $push: { product: product._id } },
             { new: true }
         );
 
-        await updatecategory.save();
-        await updatesubcategory.save();
+
+
 
 
 
@@ -55,10 +56,31 @@ async function addProductController(req, res) {
         });
     }
 }
+async function getAllProductController(req, res) {
+
+    try {
+
+        const getAllProduct = await productModel.find({}).populate("variant")
+
+
+
+        return res.status(200).json({
+            success: true,
+            message: "get all product successfully",
+            data: getAllProduct
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+
+}
 
 
 
 
 
-
-module.exports = { addProductController }
+module.exports = { addProductController, getAllProductController }

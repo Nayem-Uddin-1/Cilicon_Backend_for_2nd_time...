@@ -20,8 +20,8 @@ async function addVariantController(req, res) {
 
         await variant.save()
 
-// ====When we update any data it's dosen't need ant demo.save() to save ======
-// ====================only need add await before model name =============
+// ====When we update any data it's dosen't need any demo.save() to save ======
+// ====================only we need to add await before model name =============
 //  ==========example await productModel.findOneAndUpdate===============
         const updateProduct = await productModel.findOneAndUpdate(
             { _id: product },
