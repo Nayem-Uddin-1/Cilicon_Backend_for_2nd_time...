@@ -28,6 +28,12 @@ const categorySchema = new mongoose.Schema(
         type: mongoose.Schema.Types.ObjectId,
         ref: "Subcategory"
       }
+    ],
+    product: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product"
+      }
     ]
 
 

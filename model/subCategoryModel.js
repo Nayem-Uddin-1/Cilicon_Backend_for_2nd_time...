@@ -20,10 +20,17 @@ const subSchema = new mongoose.Schema({
         default: "",
         trim: true,
     },
-    category:{
+    category: {
         type: mongoose.Schema.Types.ObjectId,
-        ref:"Category"
-    }
+        ref: "Category"
+    },
+    product: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Product"
+        }
+    ]
+
 
 
 
