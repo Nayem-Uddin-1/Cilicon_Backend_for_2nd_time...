@@ -1,7 +1,7 @@
 const express = require("express");
 const { addProductController, getAllProductController } = require("../../controllers/productControllers");
 const upload = require("../../controllers/imageUploadsController");
-const { addVariantController } = require("../../controllers/variantController");
+const { addVariantController, deleteVariantController } = require("../../controllers/variantController");
 const router = express.Router();
 
 
@@ -14,6 +14,9 @@ router.get("/get-product", getAllProductController)
 //==============================
 
 router.post("/add-variant",upload.single("image"),addVariantController)
+
+
+router.delete("/delete-variant/:id",deleteVariantController)
 
 
 

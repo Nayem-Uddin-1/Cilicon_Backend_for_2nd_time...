@@ -62,8 +62,6 @@ async function getAllProductController(req, res) {
 
         const getAllProduct = await productModel.find({}).populate("variant")
 
-
-
         return res.status(200).json({
             success: true,
             message: "get all product successfully",
