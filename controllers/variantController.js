@@ -70,73 +70,160 @@ async function addVariantController(req, res) {
 
 async function deleteVariantController(req, res) {
 
-  const { id } = req.params;
+    const { id } = req.params;
 
-  const variant = await variantModel.findOneAndDelete({ _id: id })
+    const variant = await variantModel.findOneAndDelete({ _id: id })
 
 
-  try {
-    if (!variant) {
-      return res.status(404).json({
-        success: false,
-        messege: "variant not found"
-      })
-    } else {
+    try {
+        if (!variant) {
+            return res.status(404).json({
+                success: false,
+                messege: "variant not found"
+            })
+        } else {
 
-      if (variant.image) {
-        const oldpath = path.join(__dirname, "../uploads")
-        const fullimagepath = variant.image.split("/")
-        const imagepath = fullimagepath[fullimagepath.length - 1]
+            if (variant.image) {
+                const oldpath = path.join(__dirname, "../uploads")
+                const fullimagepath = variant.image.split("/")
+                const imagepath = fullimagepath[fullimagepath.length - 1]
 
-        
-        fs.unlink(`${oldpath}/${imagepath}`, async (error) => {
 
-          if (error) {
-            return res.status(500).json({
-              success: false,
-              message: error.message || "something is wrong"
-            });
-          }
-          else {
+                fs.unlink(`${oldpath}/${imagepath}`, async (error) => {
 
-            const productUpdate =await productModel.findOneAndUpdate(
-              { _id: variant.product },
-              { $pull: { variant: variant._id } },
-              { new: true }
-            )
-            
+                    if (error) {
+                        return res.status(500).json({
+                            success: false,
+                            message: error.message || "something is wrong"
+                        });
+                    }
+                    else {
 
-            return res.status(200).json({
-              success: true,
-              message: "variant deleted successfully"
-            });
-          }
-        })
+                        const productUpdate = await productModel.findOneAndUpdate(
+                            { _id: variant.product },
+                            { $pull: { variant: variant._id } },
+                            { new: true }
+                        )
 
-      }
-      else {
- const productUpdate = productModel.findOneAndUpdate(
-              { _id: variant.product },
-              { $pull: { variant: variant._id } },
-              { new: true }
-            )
-            productUpdate.save()
-        
-        return res.status(200).json({
-          success: true,
 
-          message: "variant deleted successfully"
+                        return res.status(200).json({
+                            success: true,
+                            message: "variant deleted successfully"
+                        });
+                    }
+                })
+
+            }
+            else {
+                const productUpdate = productModel.findOneAndUpdate(
+                    { _id: variant.product },
+                    { $pull: { variant: variant._id } },
+                    { new: true }
+                )
+                productUpdate.save()
+
+                return res.status(200).json({
+                    success: true,
+
+                    message: "variant deleted successfully"
+                });
+            }
+        }
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message || "Something went wrong",
         });
-      }
     }
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message || "Something went wrong",
-    });
-  }
+}
+
+async function updateVariantController(req, res) {
+
+    try {
+        const { id } = req.params
+        const { color, size, stock } = req.body
+
+        if (req.file?.filename) {
+            const oldVariant = await variantModel.findById(id)
+
+            if (!oldVariant) {
+                return res.status(404).json({
+                    success: false,
+                    messege: "existing oldVariant not found "
+                })
+            }
+            else {
+                if (oldVariant.image) {
+                    const oldpath = path.join(__dirname, "../uploads")
+                    const fullimagepath = oldVariant.image.split("/")
+                    const imagepath = fullimagepath[fullimagepath.length - 1]
+
+                    fs.unlink(`${oldpath}/${imagepath}`, async (error) => {
+
+                        if (error) {
+                            return res.status(500).json({
+                                success: false,
+                                message: error.message || "something is wrong"
+                            });
+                        }
+
+                    })
+                }
+                else {
+                    const updatevariant = await variantModel.findOneAndUpdate({ _id: id },
+                        {
+                            image: `${process.env.SERVER_URL}/${req.file?.filename}`,
+                            color,
+                            size,
+                            stock
+
+                        },
+                        { new: true })
+
+                    return res.status(200).json(
+                        {
+                            success: true,
+                            messege: "variant update succesfull",
+                            data: updatevariant
+                        })
+                }
+
+
+            }
+        }
+        else {
+            const updatevariant = await variantModel.findOneAndUpdate(
+                { _id: id },
+                {
+
+                    color,
+                    size,
+                    stock
+
+                },
+                { new: true })
+
+            return res.status(200).json(
+                {
+                    success: true,
+                    messege: "variant update succesfull",
+                    data: updatevariant
+                })
+        }
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            messege: error.message || "Something went wrong"
+        })
+    }
+
 }
 
 
 
-module.exports = { addVariantController, deleteVariantController }
+module.exports = {
+    addVariantController,
+    deleteVariantController,
+    updateVariantController
+}
