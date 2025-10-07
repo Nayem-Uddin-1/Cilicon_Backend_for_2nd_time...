@@ -33,6 +33,11 @@ const variantSchema = new mongoose.Schema(
                 type: String,
                 required: true,
             },
+        sku: 
+            {
+                type: String,
+                trim:true,
+            },
         
 
 
